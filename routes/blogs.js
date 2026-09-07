@@ -8,9 +8,10 @@ router.get('/', (req, res) => // `req` correspond au contenu de la requête, ici
     res.status(200).send("Coucou") // res est ce qui va être renvoyé au client. Ici un statut HTTP 200 pour dire que tout va bien, et le contenu de la page.
 )
 
-router.get('/blogs', blogController.getAllBlogs)
+router.get('', blogController.getAllBlogs)
+router.post('', blogController.createBlog)
+router.get('/:id', blogController.getBlogById)
 router.get('/author/:author', blogController.getBlogsByAuthor)
-router.get('/blog/:id', blogController.getBlogById)
-router.post('/new', blogController.createBlog)
+
 
 export default router;

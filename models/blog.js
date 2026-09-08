@@ -4,12 +4,18 @@ const { Schema, model } = mongoose;
 
 const blogSchema = new Schema({
   title: String,
-  author: String,
+  author: {
+    type: mongoose.Types.ObjectId,
+    ref: 'User'
+  },
   content: String,
   createdAt: Date,
   updatedAt: Date,
   comments: [{
-    user: String,
+    user: {
+      type: mongoose.Types.ObjectId,
+      ref: 'User'
+    },
     content: String,
     note: Number
   }]

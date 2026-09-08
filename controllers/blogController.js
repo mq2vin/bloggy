@@ -124,5 +124,5 @@ export default {
     updateArticle,
     deleteArticle,
     getComment,
-    createComment: addComment
+    addComment
 };

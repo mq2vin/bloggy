@@ -19,7 +19,7 @@ router.get('/:id', blogController.getBlogById)
 router.post('', blogController.createBlog)
 
 router.put('', blogController.updateArticle)
-router.put('/comment', blogController.createComment)
+router.put('/comment', blogController.addComment)
 
 router.delete('', blogController.deleteArticle)
 

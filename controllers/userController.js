@@ -1,10 +1,26 @@
 import User from '../models/user.js';
+import Blog from "../models/blog.js";
 
 async function getAllUsers(req, res) {
     try {
         console.log("Getting all Users");
-        const users = await User.find();
+        const users = await User.find({},{name: 1, mail: 1, createdAt: 1});
         res.send(users);
+    } catch (err) {
+        res.status(500).send(err);
+    }
+}
+
+async function getComment(req, res) {
+    try {
+        console.log("Getting comment by id " + req.params.id);
+        const comments = await Blog.find(
+            { "comments.user": req.params.id },
+            { comments: { $elemMatch: { user: req.params.id } } },
+            { _id: 0, comments: 1 }
+        );
+        console.log(comments)
+        res.send(comments);
     } catch (err) {
         res.status(500).send(err);
     }
@@ -56,5 +72,6 @@ export default {
     getAllUsers,
     createUser,
     deleteUser,
-    updateUser
+    updateUser,
+    getComment
 }

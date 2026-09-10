@@ -63,7 +63,10 @@ async function addComment(req, res) {
 
         const blog = await Blog.updateOne(
             { _id: req.body.id },
-            { comments: blogDoc.comments }
+            {
+                comments: blogDoc.comments,
+                updatedAt: Date.now()
+            }
         );
 
         res.send(blog);

@@ -5,6 +5,8 @@ const router = express.Router();
 
 router.get('', userController.getAllUsers)
 
+router.get('/:id/comment', userController.getComment)
+
 router.post('', userController.createUser)
 
 router.put('', userController.updateUser)

@@ -1,10 +1,21 @@
 import User from '../models/user.js';
 import Blog from "../models/blog.js";
 
+const champs_filtrable = ['name', 'createdAt']
+
+function getSortDirection(order) {
+    return order === 'desc' ? -1 : 1
+}
+
 async function getAllUsers(req, res) {
     try {
-        console.log("Getting all Users");
-        const users = await User.find({},{name: 1, mail: 1, createdAt: 1});
+        console.log("Getting all Users")
+        const { sort, order } = req.query
+        let query = User.find({}, { name: 1, mail: 1, createdAt: 1 });
+        if (champs_filtrable.includes(sort)) {
+            query = query.sort({ [sort]: getSortDirection(order) })
+        }
+        const users = await query;
         res.send(users);
     } catch (err) {
         res.status(500).send(err);

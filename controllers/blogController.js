@@ -2,43 +2,43 @@ import Blog from '../models/blog.js';
 import User from '../models/user.js';
 
 function escapeRegex(text) {
-    return text.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+    return text.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
 }
 
-const champs_filtrable = ['title', 'createdAt', 'updatedAt'];
+const champs_filtrable = ['title', 'createdAt', 'updatedAt']
 
 function getSortDirection(order) {
-    return order === 'desc' ? -1 : 1;
+    return order === 'desc' ? -1 : 1
 }
 
 async function findSortedBlogs(filter, req) {
     const { sort, order } = req.query;
-    const direction = getSortDirection(order);
+    const direction = getSortDirection(order)
 
-    let query = Blog.find(filter);
+    let query = Blog.find(filter)
     if (champs_filtrable.includes(sort)) {
-        query = query.sort({ [sort]: direction });
+        query = query.sort({ [sort]: direction })
     }
-    return query;
+    return query
 }
 
 async function getAllBlogs(req, res) {
     try {
         console.log("Getting all blogs");
-        const blogs = await findSortedBlogs({}, req);
-        res.send(blogs);
+        const blogs = await findSortedBlogs({}, req)
+        res.send(blogs)
     } catch (err) {
-	    res.status(500).send(err);
+	    res.status(500).send(err)
     }
 }
 
 async function getBlogById(req, res) {
     try {
-        console.log("Getting blog with id");
+        console.log("Getting blog with id")
 	//console.log(req.params.id)
-        const blog = await Blog.findById(req.params.id);
+        const blog = await Blog.findById(req.params.id)
 	    console.log(blog)
-        res.send(blog);
+        res.send(blog)
     } catch (err) {
 	    res.status(500).send(err);
     }

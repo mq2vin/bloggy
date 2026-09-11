@@ -5,10 +5,27 @@ function escapeRegex(text) {
     return text.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
 }
 
+const champs_filtrable = ['title', 'createdAt', 'updatedAt'];
+
+function getSortDirection(order) {
+    return order === 'desc' ? -1 : 1;
+}
+
+async function findSortedBlogs(filter, req) {
+    const { sort, order } = req.query;
+    const direction = getSortDirection(order);
+
+    let query = Blog.find(filter);
+    if (champs_filtrable.includes(sort)) {
+        query = query.sort({ [sort]: direction });
+    }
+    return query;
+}
+
 async function getAllBlogs(req, res) {
     try {
         console.log("Getting all blogs");
-        const blogs = await Blog.find();
+        const blogs = await findSortedBlogs({}, req);
         res.send(blogs);
     } catch (err) {
 	    res.status(500).send(err);
@@ -31,7 +48,7 @@ async function getBlogsByAuthor(req, res) {
     try {
         console.log("Getting blog");
 	//console.log(req.params.id)
-        const blog = await Blog.find({author: req.params.author});
+        const blog = await findSortedBlogs({ author: req.params.author }, req);
 	    console.log(blog)
         res.send(blog);
     } catch (err) {
@@ -42,9 +59,9 @@ async function getBlogsByAuthor(req, res) {
 async function searchBlogsByTitle(req, res) {
     try {
         console.log("Searching blogs by title");
-        const blogs = await Blog.find({
+        const blogs = await findSortedBlogs({
             title: { $regex: escapeRegex(req.params.title), $options: 'i' }
-        });
+        }, req);
         res.send(blogs);
     } catch (err) {
         res.status(500).send(err);
@@ -57,9 +74,9 @@ async function searchBlogsByAuthorName(req, res) {
         const authors = await User.find({
             name: { $regex: escapeRegex(req.params.name), $options: 'i' }
         }, { _id: 1 });
-        const blogs = await Blog.find({
+        const blogs = await findSortedBlogs({
             author: { $in: authors.map(a => a._id) }
-        });
+        }, req);
         res.send(blogs);
     } catch (err) {
         res.status(500).send(err);

@@ -1,4 +1,9 @@
 import Blog from '../models/blog.js';
+import User from '../models/user.js';
+
+function escapeRegex(text) {
+    return text.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+}
 
 async function getAllBlogs(req, res) {
     try {
@@ -31,6 +36,33 @@ async function getBlogsByAuthor(req, res) {
         res.send(blog);
     } catch (err) {
 	    res.status(500).send(err);
+    }
+}
+
+async function searchBlogsByTitle(req, res) {
+    try {
+        console.log("Searching blogs by title");
+        const blogs = await Blog.find({
+            title: { $regex: escapeRegex(req.params.title), $options: 'i' }
+        });
+        res.send(blogs);
+    } catch (err) {
+        res.status(500).send(err);
+    }
+}
+
+async function searchBlogsByAuthorName(req, res) {
+    try {
+        console.log("Searching blogs by author name");
+        const authors = await User.find({
+            name: { $regex: escapeRegex(req.params.name), $options: 'i' }
+        }, { _id: 1 });
+        const blogs = await Blog.find({
+            author: { $in: authors.map(a => a._id) }
+        });
+        res.send(blogs);
+    } catch (err) {
+        res.status(500).send(err);
     }
 }
 
@@ -124,6 +156,8 @@ export default {
     createBlog,
     getBlogById,
     getBlogsByAuthor,
+    searchBlogsByTitle,
+    searchBlogsByAuthorName,
     updateArticle,
     deleteArticle,
     getComment,

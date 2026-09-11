@@ -5,6 +5,8 @@ const router = express.Router(); // On utilise le router d'express
 
 router.get('', blogController.getAllBlogs)
 router.get('/author/:author', blogController.getBlogsByAuthor)
+router.get('/author-search/:name', blogController.searchBlogsByAuthorName)
+router.get('/search/:title', blogController.searchBlogsByTitle)
 router.get('/comment/:id', blogController.getComment)
 router.get('/:id', blogController.getBlogById)
 

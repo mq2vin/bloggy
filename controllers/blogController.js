@@ -105,7 +105,7 @@ async function createBlog(req, res) {
    try{
       console.log("Create a blog")
       console.log(req.body.title)
-      const blog = await Blog.insertOne({
+      const blog = await Blog.create({
         title: req.body.title,
         author: req.body.author,
         content: req.body.content,

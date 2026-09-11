@@ -29,7 +29,7 @@ async function getComment(req, res) {
 async function createUser(req, res) {
     try{
         console.log("Create a user")
-        const user = await User.insertOne({
+        const user = await User.create({
             name: req.body.name,
             mail: req.body.mail,
             createdAt: Date.now()

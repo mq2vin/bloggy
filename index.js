@@ -3,7 +3,6 @@ import dotenv from 'dotenv';
 import blogsRouter from './routes/blogs.js';
 import usersRouter from './routes/users.js';
 import connectDB from './config/db.js';
-import users from "./routes/users.js"; // On importe notre fonction connectDB
 
 dotenv.config();
 connectDB()

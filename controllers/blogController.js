@@ -15,6 +15,14 @@ async function findSortedBlogs(filter, req) {
     const { sort, order } = req.query;
     const direction = getSortDirection(order)
 
+    if (sort === 'avgNote') {
+        return Blog.aggregate([
+            { $match: filter },
+            { $addFields: { avgNote: { $avg: '$comments.note' } } },
+            { $sort: { avgNote: direction } }
+        ])
+    }
+
     let query = Blog.find(filter)
     if (champs_filtrable.includes(sort)) {
         query = query.sort({ [sort]: direction })

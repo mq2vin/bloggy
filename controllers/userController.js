@@ -1,5 +1,6 @@
 import User from '../models/user.js';
 import Blog from "../models/blog.js";
+import sendError from '../utils/errorHandler.js';
 
 const champs_filtrable = ['name', 'createdAt']
 
@@ -11,11 +12,11 @@ async function getAllUsers(req, res) {
     try {
         console.log("Getting all Users")
         const { sort, order } = req.query
-        let query = User.find({}, { name: 1, mail: 1, createdAt: 1 });
+        let requete = User.find({}, { name: 1, mail: 1, createdAt: 1 });
         if (champs_filtrable.includes(sort)) {
-            query = query.sort({ [sort]: getSortDirection(order) })
+            requete = requete.sort({ [sort]: getSortDirection(order) })
         }
-        const users = await query;
+        const users = await requete;
         res.send(users);
     } catch (err) {
         res.status(500).send(err);
@@ -48,7 +49,7 @@ async function createUser(req, res) {
         console.log(user)
         res.send(user)
     } catch (err) {
-        res.status(500).send(err);
+        sendError(res, err);
     }
 }
 
@@ -59,11 +60,11 @@ async function updateUser(req, res) {
             name: req.body.name,
             mail: req.body.mail,
             updatedAt: Date.now(),
-        });
+        }, { runValidators: true, context: 'query' });
         console.log(user)
         res.send(user);
     } catch (err) {
-        res.status(500).send(err);
+        sendError(res, err);
     }
 }
 

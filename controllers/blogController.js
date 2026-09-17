@@ -1,5 +1,6 @@
 import Blog from '../models/blog.js';
 import User from '../models/user.js';
+import sendError from '../utils/errorHandler.js';
 
 function escapeRegex(text) {
     return text.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
@@ -23,11 +24,11 @@ async function findSortedBlogs(filter, req) {
         ])
     }
 
-    let query = Blog.find(filter)
+    let requete = Blog.find(filter)
     if (champs_filtrable.includes(sort)) {
-        query = query.sort({ [sort]: direction })
+        requete = requete.sort({ [sort]: direction })
     }
-    return query
+    return requete
 }
 
 async function getAllBlogs(req, res) {
@@ -106,7 +107,7 @@ async function getComment(req, res) {
 
 async function addComment(req, res) {
     try {
-        const blogDoc = await Blog.findById(req.body.id, { comments: 1 });
+        const blogDoc = await Blog.findById(req.body.id);
 
         if (!blogDoc) {
             return res.status(404).send({ error: "Blog not found" });
@@ -117,19 +118,14 @@ async function addComment(req, res) {
             content: req.body.content,
             note: req.body.note
         });
+        blogDoc.updatedAt = Date.now();
 
-        const blog = await Blog.updateOne(
-            { _id: req.body.id },
-            {
-                comments: blogDoc.comments,
-                updatedAt: Date.now()
-            }
-        );
+        const blog = await blogDoc.save();
 
         res.send(blog);
     } catch (err) {
         console.log(err);
-        res.status(500).send(err);
+        sendError(res, err);
     }
 }
 async function updateArticle(req, res) {
@@ -139,11 +135,11 @@ async function updateArticle(req, res) {
             title: req.body.title,
             content: req.body.content,
             updatedAt: Date.now(),
-        });
+        }, { runValidators: true, context: 'query' });
 	    console.log(blog)
         res.send(blog);
     } catch (err) {
-	    res.status(500).send(err);
+	    sendError(res, err);
     }
 }
 
@@ -168,10 +164,10 @@ async function createBlog(req, res) {
         content: req.body.content,
         createdAt: Date.now(),
       })
-      console.log(blog)   
+      console.log(blog)
       res.send(blog)
    } catch (err) {
-	    res.status(500).send(err);
+	    sendError(res, err);
    }
 }
 
